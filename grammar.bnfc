@@ -1,0 +1,147 @@
+-- 
+-- Labeled BNF grammar for the "Concept" Programming Language.
+-- 
+-- Written by and (c) Lucas Azzola, 2016. 
+-- 
+
+entrypoints Global ;
+comment "//" ;
+
+-- Top Level (File scope)
+TopLevel.	Global ::= [TopLevelBlock] ;
+separator TopLevelBlock "" ;
+
+-- Blocks
+
+BlockAtTop.	TopLevelBlock ::= Block ;
+separator Block "" ;
+
+
+-- Basic Lexing
+
+token GenericParameter upper ;
+
+
+-- token Whitespace [" \\t\\f\\n\\r\\v"] ;
+
+--[].			[Whitespace] ::= ;
+--(:).		[Whitespace] ::= Whitespace [Whitespace] ;
+--ReqWS.		RWS ::= Whitespace [Whitespace] ;		-- Required Whitespace
+--OptWS.		OWS ::= [Whitespace];					-- Optional Whitespace
+
+-- Identifiers 
+
+token UpperIdent (upper (letter* | digit*)*) ;
+token LowerIdent (lower (lower* | digit* | '_'*)*) ;
+
+rules       NamespaceIdent ::= UpperIdent | LowerIdent ;
+rules       ParamIdent ::= UpperIdent | LowerIdent ;
+
+separator nonempty NamespaceIdent "::" ;
+separator nonempty GenericParameter "" ;
+
+GenericPlaceholder.	Type ::= GenericParameter ;
+BaseType.  			Type ::= UpperIdent ;
+GenericType.		Type ::= UpperIdent ParametricType ;
+Parameter.      	ParametricType ::= "<" Type ">" ;
+separator nonempty  Type "," ;
+
+-- Main
+
+NoOp.		Block ::= "(" ")" ;
+Main.      	TopLevelBlock ::= "(" "main" FnDecl ")" ;
+
+-- Block Definitions: Namespaces
+
+Namespace.	Block ::= "(" "namespace" [NamespaceIdent] [Block] ")" ;
+
+-- Block Definitions: Structures
+
+--rules 		Struct ::= Functor ; -- TODO: | Concept | Type ;
+
+-- Functor Declarations
+
+Functor.			Block ::= "(" "functor" LowerIdent [FunctorDecl] ")" ;
+
+(:[]).				[FunctorDecl] ::= FunctorDecl ;
+(:).		   		[FunctorDecl] ::= FunctorDecl [FunctorDecl] ;
+FunctorComponent.	FunctorDecl ::= "(" FunctorSpec ")" ;
+
+-- Functor Components
+
+Generic.	FunctorSpec ::= "generic" [GenericParameter] ;
+Satisfies.	FunctorSpec ::= "satisfies" [Type] ;
+Requires.	FunctorSpec ::= "requires" [Type] ; 
+Fn. 		FunctorSpec ::= "fn" FnDecl ;
+--FDef.		Default ::= FnDecl ;
+
+-- Type Declarations
+
+--BType.		TypeBlock ::= BlockOpen "type" Ident [TypeQual] BlockClose ;
+
+-- Concept Declarations
+
+--BConc.		ConceptBlock ::= BlockOpen "concept" Ident [ConceptQual] BlockClose ;
+
+-- Fn Declarations 
+
+FnParams.		FnDecl ::= "(" [FormalArgument] ")" [Statement] ;
+separator FormalArgument "," ;
+
+-- Fn Formal Arguments
+
+ValueParam.		FormalArgument ::= ParamIdent ":" Type ;
+GenericParam.	FormalArgument ::= ParamIdent ":" [FormalArgument] "=>" Type ;
+
+-- Fn Bodies
+
+FnCallExpr.		InformalParam ::= Expression ;
+separator InformalParam "," ;
+
+separator Statement "" ;
+coercions Expression 5 ;
+
+Declaration.			Statement ::= FormalArgument ;
+Expr.					Statement ::= Expression ;
+Assignment.				Statement ::= Expression "=" Expression ;
+
+-- Lowest Precedence
+
+ValueOrRef.				Expression ::= ParamIdent ;
+
+IntLiteral.				Expression ::= Integer ;
+RealLiteral.			Expression ::= Double ;
+StringLiteral.			Expression ::= String ;			
+CharLiteral.			Expression ::= Char ;	
+FnLiteral.				Expression ::= "(" "fn" FnDecl ")" ;		
+
+DotOperator.			Expression ::= Expression "." Expression ;
+PipeOperator.			Expression ::= Expression "|" Expression ;
+CallOperator.			Expression ::= Expression "(" [InformalParam] ")" ;
+
+LeftShiftOperator. 		Expression ::= Expression "<<" Expression ;
+RightShiftOperator.		Expression ::= Expression ">>" Expression ;
+
+MultOperator. 			Expression ::= Expression "*" Expression ;
+DivisionOperator.		Expression ::= Expression "/" Expression ;
+
+PlusOperator.			Expression ::= Expression "+" Expression ;
+MinusOperator.			Expression ::= Expression "-" Expression ;
+
+-- Highest Precedence
+
+
+
+--(Functor "x" [
+--	(FunctorDecl [
+--		(Generic [
+--			(TNL "Y")
+--		])
+--	]),
+--	(FunctorDecl [
+--		(Satisfies [
+--			(RegIdent "Zzz")
+--		])
+--	])
+--])
+

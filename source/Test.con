@@ -1,0 +1,13 @@
+(functor test_functor
+    (generic T)
+    (satisfies Callable<T>)
+    (fn (t: T)
+        a: T
+        // comment
+        x = 1
+        y = x + 1
+        z = t()
+
+        pipe = t() | func
+    )
+)
