@@ -3,7 +3,7 @@
     (satisfies Callable<T>)
     (fn (t: T)
         a: T
-        // comment
+        # comment
         x = 1
         y = x + 1
         z = t()

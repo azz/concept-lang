@@ -1,0 +1,9 @@
+*.bak
+*.toc
+*.aux
+*.log
+*.hi
+*.o
+build/haskell/TestGrammar
+build/cpp/Testgrammar
+

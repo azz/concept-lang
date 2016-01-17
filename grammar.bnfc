@@ -5,7 +5,8 @@
 -- 
 
 entrypoints Global ;
-comment "//" ;
+comment "#" ;
+comment "#(" ")" ;
 
 -- Top Level (File scope)
 TopLevel.	Global ::= [TopLevelBlock] ;
@@ -144,4 +145,111 @@ MinusOperator.			Expression ::= Expression "-" Expression ;
 --		])
 --	])
 --])
+
+--(functor test_functor
+--    (generic T)
+--    (satisfies Callable<T>)
+--    (fn (t: T)
+--        a: T
+--        # comment
+--        x = 1
+--        y = x + 1
+--        z = t()
+
+--        pipe = t() | func
+--    )
+--)
+
+--(TopLevel [
+--	(BlockAtTop [
+--		(Functor "test_functor" [
+--			(FunctorComponent [
+--				(Generic ["T"])
+--			]),
+--			(FunctorComponent [
+--				(Satisfies [
+--					(GenericType "Callable" [
+--						(Parameter [
+--							(GenericPlaceholder "T")
+--						])
+--					])
+--				])
+--			]),
+--			(FunctorComponent [
+--				(Fn [
+--					(FnParams [
+--						(ValueParam [
+--							(ParamIdentLowerIdent "t")
+--						] 
+--						[
+--							(GenericPlaceholder "T")
+--						])
+--					]
+--					[
+--						(Declaration [
+--							(ValueParam [
+--								(ParamIdentLowerIdent "a")
+--							] 
+--							[(GenericPlaceholder "T")]
+--							)]
+--						), 
+--						(Assignment 
+--							(ValueOrRef [
+--								(ParamIdentLowerIdent "x")
+--							])
+--							(IntLiteral 1)
+--						), 
+--						(Assignment 
+--							(ValueOrRef [
+--								(ParamIdentLowerIdent "y")
+--							])
+--							(PlusOperator 
+--								(ValueOrRef [
+--									(ParamIdentLowerIdent "x")
+--								])
+--								(IntLiteral 1)
+--							)
+--						),
+--						(Assignment 
+--							(ValueOrRef [
+--								(ParamIdentLowerIdent "z")
+--							])
+--							(CallOperator [
+--								(ValueOrRef [
+--									(ParamIdentLowerIdent "t")
+--								])
+--							] 
+--							[]
+--							)
+--						), 
+--						(Assignment 
+--							(ValueOrRef [
+--								(ParamIdentLowerIdent "pipe")
+--								]) 
+--							(PipeOperator 
+--								(CallOperator [
+--									(ValueOrRef [
+--										(ParamIdentLowerIdent "t")
+--									])
+--								]
+--								[]
+--								) 
+--								(ValueOrRef [
+--									(ParamIdentLowerIdent "func")])
+--							)
+--						)
+--					])
+--				])
+--			])
+--		])
+--	])
+--])
+
+
+
+
+
+
+
+
 
